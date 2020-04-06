@@ -55,110 +55,112 @@ class _CreateTaskDialogState extends State<CreateTaskDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          color: grayColor,
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(normalSpace),
-              topLeft: Radius.circular(normalSpace))),
-      padding: EdgeInsets.only(
-          left: normalSpace,
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          right: normalSpace,
-          top: normalSpace),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          TextField(
-            style: TextStyle(fontSize: normalTextSize, color: lightGrayColor),
-            decoration: InputDecoration(
-              hintText: "New task",
-              border: InputBorder.none,
-              hintStyle: TextStyle(
-                fontSize: normalTextSize,
-                color: lightGrayColor.withAlpha(50),
+    return SingleChildScrollView(
+      child: Container(
+        decoration: BoxDecoration(
+            color: grayColor,
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(normalSpace),
+                topLeft: Radius.circular(normalSpace))),
+        padding: EdgeInsets.only(
+            left: normalSpace,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            right: normalSpace,
+            top: normalSpace),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextField(
+              style: TextStyle(fontSize: normalTextSize, color: lightGrayColor),
+              decoration: InputDecoration(
+                hintText: "New task",
+                border: InputBorder.none,
+                hintStyle: TextStyle(
+                  fontSize: normalTextSize,
+                  color: lightGrayColor.withAlpha(50),
+                ),
               ),
             ),
-          ),
-          _detailsVisible
-              ? TextField(
-                  cursorColor: blueColor,
-                  style: TextStyle(
-                      fontSize: verySmallTextSize, color: lightGrayColor),
-                  decoration: InputDecoration(
-                    hintText: "Add details",
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      fontSize: verySmallTextSize,
-                      color: lightGrayColor.withAlpha(50),
+            _detailsVisible
+                ? TextField(
+                    cursorColor: blueColor,
+                    style: TextStyle(
+                        fontSize: verySmallTextSize, color: lightGrayColor),
+                    decoration: InputDecoration(
+                      hintText: "Add details",
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        fontSize: verySmallTextSize,
+                        color: lightGrayColor.withAlpha(50),
+                      ),
                     ),
-                  ),
-                )
-              : Container(),
-          _selectedDate != null
-              ? InputChip(
-                  backgroundColor: blackColor,
-                  label: Text(
-                    "${DateFormat('yyyy-mm-dd').format(_selectedDate)} ${_selectedTime.format(context)}",
-                    style: TextStyle(fontSize: smallTextSize, color: grayColor),
-                  ),
-                  avatar: Icon(
-                    Icons.calendar_today,
-                    size: verySmallButtonSize,
+                  )
+                : Container(),
+            _selectedDate != null
+                ? InputChip(
+                    backgroundColor: blackColor,
+                    label: Text(
+                      "${DateFormat('yyyy-mm-dd').format(_selectedDate)} ${_selectedTime.format(context)}",
+                      style: TextStyle(fontSize: smallTextSize, color: grayColor),
+                    ),
+                    avatar: Icon(
+                      Icons.calendar_today,
+                      size: verySmallButtonSize,
+                      color: blueColor,
+                    ),
+                    deleteIcon: Icon(
+                      Icons.close,
+                      size: verySmallButtonSize,
+                      color: veryLightGrayColor,
+                    ),
+                    onDeleted: () {
+                      setState(() {
+                        _selectedDate = null;
+                      });
+                    },
+                  )
+                : Container(),
+            Row(
+              children: <Widget>[
+                InkWell(
+                  child: Icon(
+                    Icons.sort,
                     color: blueColor,
+                    size: smallButtonSize,
                   ),
-                  deleteIcon: Icon(
-                    Icons.close,
-                    size: verySmallButtonSize,
-                    color: veryLightGrayColor,
-                  ),
-                  onDeleted: () {
+                  onTap: () {
                     setState(() {
-                      _selectedDate = null;
+                      _detailsVisible = !_detailsVisible;
                     });
                   },
-                )
-              : Container(),
-          Row(
-            children: <Widget>[
-              InkWell(
-                child: Icon(
-                  Icons.sort,
-                  color: blueColor,
-                  size: smallButtonSize,
                 ),
-                onTap: () {
-                  setState(() {
-                    _detailsVisible = !_detailsVisible;
-                  });
-                },
-              ),
-              SizedBox(
-                width: normalSpace,
-              ),
-              InkWell(
-                child: Icon(
-                  Icons.date_range,
-                  color: blueColor,
-                  size: smallButtonSize,
+                SizedBox(
+                  width: normalSpace,
                 ),
-                onTap: () {
-                  _selectDate(context);
-                },
-              ),
-              Spacer(),
-              FlatButton(
-                  onPressed: () {},
-                  child: Text(
-                    "Save",
-                    style:
-                        TextStyle(fontSize: normalTextSize, color: blueColor),
-                  ))
-            ],
-          )
-        ],
+                InkWell(
+                  child: Icon(
+                    Icons.date_range,
+                    color: blueColor,
+                    size: smallButtonSize,
+                  ),
+                  onTap: () {
+                    _selectDate(context);
+                  },
+                ),
+                Spacer(),
+                FlatButton(
+                    onPressed: () {},
+                    child: Text(
+                      "Save",
+                      style:
+                          TextStyle(fontSize: normalTextSize, color: blueColor),
+                    ))
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
