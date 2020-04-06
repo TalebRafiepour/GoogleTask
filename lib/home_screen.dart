@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_task_in_practice/create_task_dialog.dart';
+import 'package:google_task_in_practice/more_option.dart';
 import 'package:google_task_in_practice/res.dart';
 
 import 'hamburgers_list.dart';
@@ -31,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
           color: grayColor,
           shape: CircularNotchedRectangle(),
           child: Container(
-            padding: EdgeInsets.only(left: smallPadding, right: smallPadding),
+            padding: EdgeInsets.only(left: smallSpace, right: smallSpace),
             height: bottomBarHeight,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -46,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onTap: () {
                     showModalBottomSheet(
                         context: context,
+                        backgroundColor: Colors.transparent,
                         builder: (BuildContext ctx) => HamburgersList());
                   },
                 ),
@@ -55,7 +58,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: lightGrayColor,
                     size: smallButtonSize,
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    showModalBottomSheet(
+                        context: context,
+                        backgroundColor: Colors.transparent,
+                        builder: (BuildContext ctx) => MoreOption());
+                  },
                 ),
               ],
             ),
@@ -64,7 +72,12 @@ class _MyHomePageState extends State<MyHomePage> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           backgroundColor: grayColor.withOpacity(0.7),
-          onPressed: () {},
+          onPressed: () {
+            showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                builder: (BuildContext ctx) => CreateTaskDialog());
+          },
           child: Icon(
             Icons.add,
             size: normalButtonSize,
