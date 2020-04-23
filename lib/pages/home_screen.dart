@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_task_in_practice/create_task_dialog.dart';
+import 'package:google_task_in_practice/database/app_database.dart';
+import 'package:google_task_in_practice/database/entity/task.dart';
+import 'package:google_task_in_practice/database/entity/task_list.dart';
 import 'package:google_task_in_practice/more_option.dart';
 import 'package:google_task_in_practice/res.dart';
 
-import 'hamburgers_list.dart';
+import '../hamburgers_list.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -11,8 +14,30 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  _showAllTaskListFromDataBase() async {
+    List<TaskList> myTaskList =
+        await AppDatabase.instance.taskListDao.getAllTaskList();
+
+    for (int i = 0; i < myTaskList.length; i++) {
+      print("id: ${myTaskList[i].id} title: ${myTaskList[i].title}\n");
+    }
+  }
+
+  _showAllTaskFromDataBase() async {
+    List<Task> taskList = await AppDatabase.instance.taskDao.getAllTask();
+
+    for (int i = 0; i < taskList.length; i++) {
+      print("id: ${taskList[i].id} "
+          "title: ${taskList[i].title} description: ${taskList[i].description} "
+          "dateTime: ${taskList[i].dateTime} taskListID: ${taskList[i].taskListID} \n");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    //_showAllTaskListFromDataBase();
+    _showAllTaskFromDataBase();
+
     return SafeArea(
       bottom: false,
       top: false,

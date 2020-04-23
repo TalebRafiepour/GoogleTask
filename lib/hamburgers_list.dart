@@ -13,16 +13,22 @@ class HamburgersList extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          ListTile(
-            leading: Icon(
-              Icons.add,
-              size: smallButtonSize,
-              color: lightGrayColor,
+          InkWell(
+            child: ListTile(
+              leading: Icon(
+                Icons.add,
+                size: smallButtonSize,
+                color: lightGrayColor,
+              ),
+              title: Text(
+                "Create new list",
+                style: TextStyle(fontSize: smallTextSize, color: lightGrayColor),
+              ),
             ),
-            title: Text(
-              "Create new list",
-              style: TextStyle(fontSize: smallTextSize, color: lightGrayColor),
-            ),
+            onTap: () {
+              print("on create new list tapped");
+              Navigator.pushNamed(context, '/createList');
+            },
           ),
           Divider(
             height: 1,

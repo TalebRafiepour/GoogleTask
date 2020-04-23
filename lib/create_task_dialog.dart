@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/rounded_picker.dart';
+import 'package:google_task_in_practice/database/app_database.dart';
 import 'package:google_task_in_practice/res.dart';
 import 'package:intl/intl.dart';
+
+import 'database/entity/task.dart';
 
 class CreateTaskDialog extends StatefulWidget {
   @override
@@ -13,6 +16,10 @@ class _CreateTaskDialogState extends State<CreateTaskDialog> {
   DateTime _selectedDate;
   BottomSheet sheet;
   TimeOfDay _selectedTime = TimeOfDay.now();
+
+  //
+  TextEditingController _taskTitleController = TextEditingController();
+  TextEditingController _taskDescController = TextEditingController();
 
   _selectDate(BuildContext context) async {
     DateTime newSelectedDate = await showRoundedDatePicker(
@@ -73,6 +80,7 @@ class _CreateTaskDialogState extends State<CreateTaskDialog> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             TextField(
+              controller: _taskTitleController,
               style: TextStyle(fontSize: normalTextSize, color: lightGrayColor),
               decoration: InputDecoration(
                 hintText: "New task",
@@ -85,6 +93,7 @@ class _CreateTaskDialogState extends State<CreateTaskDialog> {
             ),
             _detailsVisible
                 ? TextField(
+                    controller: _taskDescController,
                     cursorColor: blueColor,
                     style: TextStyle(
                         fontSize: verySmallTextSize, color: lightGrayColor),
@@ -103,7 +112,8 @@ class _CreateTaskDialogState extends State<CreateTaskDialog> {
                     backgroundColor: blackColor,
                     label: Text(
                       "${DateFormat('yyyy-mm-dd').format(_selectedDate)} ${_selectedTime.format(context)}",
-                      style: TextStyle(fontSize: smallTextSize, color: grayColor),
+                      style:
+                          TextStyle(fontSize: smallTextSize, color: grayColor),
                     ),
                     avatar: Icon(
                       Icons.calendar_today,
@@ -151,7 +161,7 @@ class _CreateTaskDialogState extends State<CreateTaskDialog> {
                 ),
                 Spacer(),
                 FlatButton(
-                    onPressed: () {},
+                    onPressed: _saveTask,
                     child: Text(
                       "Save",
                       style:
@@ -163,5 +173,31 @@ class _CreateTaskDialogState extends State<CreateTaskDialog> {
         ),
       ),
     );
+  }
+
+  _saveTask() async {
+
+    String taskTitle = _taskTitleController.text;
+    if (taskTitle == null || taskTitle.isEmpty) {
+      return;
+    }
+
+    String taskDescription = _detailsVisible ? _taskDescController.text : null;
+
+    DateTime selectedDate = _selectedDate;
+    if (selectedDate == null){
+      selectedDate = DateTime.now();
+    }
+
+    String dateTime = "${DateFormat('yyyy-mm-dd').format(selectedDate)}T${_selectedTime.format(context)}";
+
+    //print("taskTitle: $taskTitle  taskDescription: $taskDescription dateTime: $dateTime");
+
+    Task task = Task(title: taskTitle,description: taskDescription,dateTime: dateTime,taskListID: 1);
+
+    await AppDatabase.instance.taskDao.insertTask(task);
+
+    Navigator.pop(context);
+
   }
 }
