@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_task_in_practice/database/app_database.dart';
 import 'package:google_task_in_practice/pages/create_list.dart';
+import 'package:google_task_in_practice/res.dart';
 
 import 'pages/home_screen.dart';
 
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        unselectedWidgetColor: lightGrayColor,
       ),
     );
   }

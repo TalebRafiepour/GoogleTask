@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_task_in_practice/database/entity/task_list.dart';
 import 'package:google_task_in_practice/res.dart';
 
-class HamburgersList extends StatelessWidget {
+class LeftMenuWidget extends StatelessWidget {
+  final List<TaskList> lists;
+  final TaskList selectedList;
+
+  LeftMenuWidget({this.lists, this.selectedList});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -13,6 +19,7 @@ class HamburgersList extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          _getListTitles(),
           InkWell(
             child: ListTile(
               leading: Icon(
@@ -22,7 +29,8 @@ class HamburgersList extends StatelessWidget {
               ),
               title: Text(
                 "Create new list",
-                style: TextStyle(fontSize: smallTextSize, color: lightGrayColor),
+                style:
+                    TextStyle(fontSize: smallTextSize, color: lightGrayColor),
               ),
             ),
             onTap: () {
@@ -83,6 +91,51 @@ class HamburgersList extends StatelessWidget {
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Widget _getListTitles() {
+    List<Widget> titleWidgets = [];
+
+    if (lists == null || lists.isEmpty) {
+      return null;
+    } else {
+      for (int i = 0; i < lists.length; i++) {
+        titleWidgets.add(Container(
+          alignment: Alignment.centerLeft,
+          padding: EdgeInsets.all(smallSpace),
+          decoration: selectedList.id == lists[i].id
+              ? BoxDecoration(
+                  color: blueColor,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(normalSpace),
+                    bottomRight: Radius.circular(normalSpace),
+                  ),
+                )
+              : BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(normalSpace),
+                    bottomRight: Radius.circular(normalSpace),
+                  ),
+                ),
+          child: Text(
+            "${lists[i].title}",
+            style: TextStyle(
+                color: selectedList.id == lists[i].id
+                    ? Colors.black
+                    : lightGrayColor,
+                fontSize: normalTextSize),
+          ),
+        ));
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: normalSpace, right: smallSpace),
+      child: Column(
+        children: titleWidgets,
       ),
     );
   }

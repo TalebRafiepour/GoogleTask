@@ -14,30 +14,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  _showAllTaskListFromDataBase() async {
-    List<TaskList> myTaskList =
-        await AppDatabase.instance.taskListDao.getAllTaskList();
+  TaskList _currentTaskList = TaskList(id: 1,title: "My Task");
+  List<Task> _tasksList = [];
+  List<TaskList> _lists  = [];
 
-    for (int i = 0; i < myTaskList.length; i++) {
-      print("id: ${myTaskList[i].id} title: ${myTaskList[i].title}\n");
-    }
+  _getAllTask(int taskListId) async {
+    _tasksList = await AppDatabase.instance.taskDao.getAllTask();
+    setState(() {});
   }
 
-  _showAllTaskFromDataBase() async {
-    List<Task> taskList = await AppDatabase.instance.taskDao.getAllTask();
-
-    for (int i = 0; i < taskList.length; i++) {
-      print("id: ${taskList[i].id} "
-          "title: ${taskList[i].title} description: ${taskList[i].description} "
-          "dateTime: ${taskList[i].dateTime} taskListID: ${taskList[i].taskListID} \n");
+  _getLatestList() async {
+    var allTaskList = await AppDatabase.instance.taskListDao.getAllTaskList();
+    if (allTaskList == null || allTaskList.isEmpty) {
+      _lists.add(TaskList(id: 1,title: "My Task"));
+      AppDatabase.instance.taskListDao.insertTaskList(TaskList(id: 1,title: "My Task"));
+    } else {
+      setState(() {
+        _lists = allTaskList;
+        _currentTaskList = allTaskList.last;
+      });
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    //_showAllTaskListFromDataBase();
-    _showAllTaskFromDataBase();
+  void initState() {
+    super.initState();
+    _getLatestList();
+    _getAllTask(_currentTaskList.id);
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
       top: false,
@@ -54,60 +61,104 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        bottomNavigationBar: BottomAppBar(
-          color: grayColor,
-          shape: CircularNotchedRectangle(),
-          child: Container(
-            padding: EdgeInsets.only(left: smallSpace, right: smallSpace),
-            height: bottomBarHeight,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                InkWell(
-                  child: Icon(
-                    Icons.menu,
-                    color: lightGrayColor,
-                    size: smallButtonSize,
-                  ),
-                  onTap: () {
-                    showModalBottomSheet(
-                        context: context,
-                        backgroundColor: Colors.transparent,
-                        builder: (BuildContext ctx) => HamburgersList());
-                  },
-                ),
-                InkWell(
-                  child: Icon(
-                    Icons.more_vert,
-                    color: lightGrayColor,
-                    size: smallButtonSize,
-                  ),
-                  onTap: () {
-                    showModalBottomSheet(
-                        context: context,
-                        backgroundColor: Colors.transparent,
-                        builder: (BuildContext ctx) => MoreOption());
-                  },
-                ),
-              ],
+        bottomNavigationBar: _getBottomAppBarWidget(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: _getFloatingActionButton(),
+        body: _getBody(),
+      ),
+    );
+  }
+
+  Widget _getBody() {
+    return ListView.builder(
+      itemBuilder: (ctx, index) {
+        return Container(
+          margin: EdgeInsets.all(10),
+          child: RadioListTile(
+            value: 1,
+            groupValue: 0,
+            onChanged: (int) {},
+            title: Text(
+              "${_tasksList[index].title}",
+              style: TextStyle(fontSize: normalTextSize, color: lightGrayColor),
+            ),
+            subtitle: _tasksList[index].description != null
+                ? Text(
+                    "${_tasksList[index].description}",
+                    style: TextStyle(
+                        fontSize: smallTextSize, color: lightGrayColor),
+                  )
+                : null,
+            secondary: FlatButton(
+              onPressed: () {},
+              child: Text(
+                "Edit",
+                style:
+                    TextStyle(fontSize: normalTextSize, color: lightGrayColor),
+              ),
             ),
           ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: grayColor.withOpacity(0.7),
-          onPressed: () {
-            showModalBottomSheet(
-                context: context,
-                backgroundColor: Colors.transparent,
-                builder: (BuildContext ctx) => CreateTaskDialog());
-          },
-          child: Icon(
-            Icons.add,
-            size: normalButtonSize,
-            color: Colors.blue,
-          ),
+        );
+      },
+      itemCount: _tasksList.length,
+    );
+  }
+
+  Widget _getFloatingActionButton() {
+    return FloatingActionButton(
+      backgroundColor: grayColor.withOpacity(0.7),
+      onPressed: () {
+        showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.transparent,
+            builder: (BuildContext ctx) => CreateTaskDialog());
+      },
+      child: Icon(
+        Icons.add,
+        size: normalButtonSize,
+        color: Colors.blue,
+      ),
+    );
+  }
+
+  Widget _getBottomAppBarWidget() {
+    return BottomAppBar(
+      color: grayColor,
+      shape: CircularNotchedRectangle(),
+      child: Container(
+        padding: EdgeInsets.only(left: smallSpace, right: smallSpace),
+        height: bottomBarHeight,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            InkWell(
+              child: Icon(
+                Icons.menu,
+                color: lightGrayColor,
+                size: smallButtonSize,
+              ),
+              onTap: () {
+                showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    builder: (BuildContext ctx) => LeftMenuWidget(lists: _lists,selectedList: _currentTaskList,));
+              },
+            ),
+            InkWell(
+              child: Icon(
+                Icons.more_vert,
+                color: lightGrayColor,
+                size: smallButtonSize,
+              ),
+              onTap: () {
+                showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    builder: (BuildContext ctx) => MoreOption());
+              },
+            ),
+          ],
         ),
       ),
     );
